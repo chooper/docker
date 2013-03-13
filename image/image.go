@@ -314,6 +314,18 @@ type Image struct {
 	Parent  string
 }
 
+func (image *Image) Size() (int64, error) {
+	var total_size int64 = 0
+	for _, image_path := range image.Layers {
+		if path_size, err := future.PathSize(image_path); err == nil {
+			return -1, err
+		} else {
+			total_size += path_size
+		}
+	}
+	return total_size, nil
+}
+
 func (image *Image) IdParts() (string, string) {
 	if len(image.Id) < 8 {
 		return "", image.Id
