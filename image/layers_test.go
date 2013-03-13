@@ -30,6 +30,13 @@ func TestAddLayer(t *testing.T) {
 	if _, err := os.Stat(layer); err != nil {
 		t.Fatalf("Error testing for existence of layer: %s\n", err.Error())
 	}
+	size, err := store.Size()
+	if err != nil {
+		t.Fatalf("Error while getting LayerStore size: %s\n", err.Error())
+	}
+	if size < 1 {
+		t.Fatalf("Invalid LayerStore size: %s\n", err.Error())
+	}
 }
 
 func TestComputeId(t *testing.T) {
