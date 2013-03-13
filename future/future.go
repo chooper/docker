@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"math/rand"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
 )
 
@@ -100,3 +102,23 @@ func Curl(url string, stderr io.Writer) (io.Reader, error) {
 	}
 	return output, nil
 }
+
+// Figure out the storage consumed by a given directory
+func PathSize(path string) (int64, error) {
+    // Build a closure to aggregate file sizes
+    var walker =
+        func (size *int64) func (path string, f os.FileInfo, err error) error {
+
+        return func (path string, f os.FileInfo, err error) error {
+            *size = *size + f.Size()
+            return nil
+        }
+    }
+
+    var size int64
+    if err := filepath.Walk(path, walker(&size)); err != nil {
+        return -1, err
+    }
+    return size, nil
+}
+

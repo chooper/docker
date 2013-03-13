@@ -136,20 +136,6 @@ func (store *LayerStore) Exists(id string) bool {
 
 // Get the size of the given LayerStore
 func (store *LayerStore) Size() (int64, error) {
-	// Build a closure to aggregate file sizes
-    var walker = 
-		func (size *int64) func (path string, f os.FileInfo, err error) error {
-
-        return func (path string, f os.FileInfo, err error) error {
-			*size = *size + f.Size()
-            return nil
-        }
-    }
-
-    var size int64
-	if err := filepath.Walk(store.Root, walker(&size)); err != nil {
-		return -1, err
-	}
-    return size, nil
+	return future.PathSize(store.Root)
 }
 
