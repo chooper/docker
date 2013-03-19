@@ -349,7 +349,9 @@ func (container *Container) Start() error {
 		return err
 	}
 	container.State.setRunning(container.cmd.Process.Pid)
-	container.save()
+	if err := container.save(); err != nil {
+		return err
+	}
 	go container.monitor()
 	return nil
 }
@@ -461,7 +463,9 @@ func (container *Container) monitor() {
 
 	// Report status back
 	container.State.setStopped(exitCode)
-	container.save()
+	if err := container.save(); err != nil {
+		log.Printf("%v: Failed to save config: %v", container.Id, err)
+	}
 }
 
 func (container *Container) kill() error {
