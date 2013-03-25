@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"os/user"
 	"strconv"
+	"strings"
 	"syscall"
 )
 
@@ -52,11 +53,20 @@ func changeUser(u string) {
 	}
 }
 
-// Set the environment to a known, repeatable state
-func setupEnv() {
+// Clear environment pollution introduced by lxc-start
+func cleanupEnv() {
+	env := os.Environ()
 	os.Clearenv()
-	os.Setenv("HOME", "/")
-	os.Setenv("PATH", "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")
+	for _, kv := range env {
+		parts := strings.SplitN(kv, "=", 2)
+		if len(parts) == 1 {
+			parts = append(parts, "")
+		}
+		if parts[0] == "container" {
+			continue
+		}
+		os.Setenv(parts[0], parts[1])
+	}
 }
 
 func executeProgram(name string, args []string) {
@@ -85,7 +95,7 @@ func SysInit() {
 	flag.Parse()
 
 	setupNetworking(*gw)
+	cleanupEnv()
 	changeUser(*u)
-	setupEnv()
 	executeProgram(flag.Arg(0), flag.Args())
 }

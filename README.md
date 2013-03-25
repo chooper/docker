@@ -1,9 +1,9 @@
 Docker: the Linux container runtime
 ===================================
 
-Docker complements LXC with a high-level API with operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
+Docker complements LXC with a high-level API which operates at the process level. It runs unix processes with strong guarantees of isolation and repeatability across servers.
 
-Is is a great building block for automating distributed systems: large-scale web deployments, database clusters, continuous deployment systems, private PaaS, service-oriented architectures, etc.
+Docker is a great building block for automating distributed systems: large-scale web deployments, database clusters, continuous deployment systems, private PaaS, service-oriented architectures, etc.
 
 <img src="http://bricks.argz.com/bricksfiles/lego/07000/7823/012.jpg"/>
 
@@ -27,7 +27,7 @@ Notable features
 
 * Copy-on-write: root filesystems are created using copy-on-write, which makes deployment extremeley fast, memory-cheap and disk-cheap.
 
-* Logging: the standard streams (stdout/stderr/stdin) of each process container is collected and logged for real-time or batch retrieval.
+* Logging: the standard streams (stdout/stderr/stdin) of each process container are collected and logged for real-time or batch retrieval.
 
 * Change management: changes to a container's filesystem can be committed into a new image and re-used to create more containers. No templating or manual configuration required.
 
@@ -58,28 +58,28 @@ Installing on Ubuntu 12.04 and 12.10
 
 1. Install dependencies:
 
-```bash
-sudo apt-get install lxc wget bsdtar curl
-sudo apt-get install linux-image-extra-`uname -r`
-```
+    ```bash
+    sudo apt-get install lxc wget bsdtar curl
+    sudo apt-get install linux-image-extra-`uname -r`
+    ```
 
-The `linux-image-extra` package is needed on standard Ubuntu EC2 AMIs in order to install the aufs kernel module.
+    The `linux-image-extra` package is needed on standard Ubuntu EC2 AMIs in order to install the aufs kernel module.
 
 2. Install the latest docker binary:
 
-```bash
-wget http://get.docker.io/builds/$(uname -s)/$(uname -m)/docker-master.tgz
-tar -xf docker-master.tgz
-```
+    ```bash
+    wget http://get.docker.io/builds/$(uname -s)/$(uname -m)/docker-master.tgz
+    tar -xf docker-master.tgz
+    ```
 
 3. Run your first container!
 
-```bash
-cd docker-master
-sudo ./docker run -a -i -t base /bin/bash
-```
+    ```bash
+    cd docker-master
+    sudo ./docker run -i -t base /bin/bash
+    ```
 
-Consider adding docker to your `PATH` for simplicity.
+    Consider adding docker to your `PATH` for simplicity.
 
 Installing on other Linux distributions
 ---------------------------------------
@@ -136,7 +136,7 @@ docker import base
 
 # Run an interactive shell in the base image,
 # allocate a tty, attach stdin and stdout
-docker run -a -i -t base /bin/bash
+docker run -i -t base /bin/bash
 ```
 
 
@@ -148,7 +148,7 @@ Starting a long-running worker process
 (docker -d || echo "Docker daemon already running") &
 
 # Start a very useful long-running process
-JOB=$(docker run base /bin/sh -c "while true; do echo Hello world; sleep 1; done")
+JOB=$(docker run -d base /bin/sh -c "while true; do echo Hello world; sleep 1; done")
 
 # Collect the output of the job so far
 docker logs $JOB
@@ -171,7 +171,7 @@ Expose a service on a TCP port
 
 ```bash
 # Expose port 4444 of this container, and tell netcat to listen on it
-JOB=$(docker run -p 4444 base /bin/nc -l -p 4444)
+JOB=$(docker run -d -p 4444 base /bin/nc -l -p 4444)
 
 # Which public port is NATed to my container?
 PORT=$(docker port $JOB 4444)
@@ -195,10 +195,10 @@ Contribution guidelines
 
 We are always thrilled to receive pull requests, and do our best to process them as fast as possible. Not sure if that typo is worth a pull request? Do it! We will appreciate it.
 
-If your pull request is not accepted on the first try, don't be discouraged! If there's a problen with the implementation, hopefully you received feedback on what to improve.
+If your pull request is not accepted on the first try, don't be discouraged! If there's a problem with the implementation, hopefully you received feedback on what to improve.
 
 We're trying very hard to keep Docker lean and focused. We don't want it to do everything for everybody. This means that we might decide against incorporating a new feature.
-However there might be a way to implement that feature *on top of* docker.
+However, there might be a way to implement that feature *on top of* docker.
 
 ### Discuss your design on the mailing list
 
@@ -207,7 +207,7 @@ you in the right direction, give feedback on your design, and maybe point out if
 
 ### Create issues...
 
-Any significant improvement should be documented as a github issue before anybody start working on it.
+Any significant improvement should be documented as [a github issue](https://github.com/dotcloud/docker/issues) before anybody starts working on it.
 
 ### ...but check for existing issues first!
 
@@ -224,10 +224,10 @@ Golang has a great testing suite built in: use it! Take a look at existing tests
 Setting up a dev environment
 ----------------------------
 
-Instructions that is verified to work on Ubuntu 12.10,
+Instructions that have been verified to work on Ubuntu 12.10,
 
 ```bash
-sudo apt-get -y install lxc wget bsdtar curl libsqlite3-dev golang git pkg-config
+sudo apt-get -y install lxc wget bsdtar curl golang git
 
 export GOPATH=~/go/
 export PATH=$GOPATH/bin:$PATH
@@ -254,9 +254,9 @@ What is a Standard Container?
 =============================
 
 Docker defines a unit of software delivery called a Standard Container. The goal of a Standard Container is to encapsulate a software component and all its dependencies in
-a format that is self-describing and portable, so that any compliant runtime can run it without extra dependency, regardless of the underlying machine and the contents of the container.
+a format that is self-describing and portable, so that any compliant runtime can run it without extra dependencies, regardless of the underlying machine and the contents of the container.
 
-The spec for Standard Containers is currently work in progress, but it is very straightforward. It mostly defines 1) an image format, 2) a set of standard operations, and 3) an execution environment.
+The spec for Standard Containers is currently a work in progress, but it is very straightforward. It mostly defines 1) an image format, 2) a set of standard operations, and 3) an execution environment.
 
 A great analogy for this is the shipping container. Just like Standard Containers are a fundamental unit of software delivery, shipping containers (http://bricks.argz.com/ins/7823-1/12) are a fundamental unit of physical delivery.
 
